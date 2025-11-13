@@ -1,17 +1,40 @@
 {
   "name": "stock-analysis-frontend",
   "version": "1.0.0",
-  "description": "股票分析工具前端",
+  "description": "股票分析工具前端项目",
   "main": "index.html",
   "scripts": {
-    "start": "live-server --port=3000",
-    "build": "echo 'No build process needed for static site'",
-    "test": "echo 'No tests specified'"
+    "start": "live-server --port=3000 --open",
+    "dev": "live-server --port=3000 --watch",
+    "build": "echo '静态站点无需构建'",
+    "test": "echo '测试未配置' && exit 0",
+    "lint": "echo '代码检查未配置' && exit 0"
   },
-  "keywords": ["stock", "analysis", "finance", "trading"],
-  "author": "Your Name",
+  "keywords": [
+    "stock",
+    "analysis",
+    "finance",
+    "trading",
+    "frontend"
+  ],
+  "author": "开发者",
   "license": "MIT",
   "devDependencies": {
     "live-server": "^1.2.2"
-  }
+  },
+  "dependencies": {
+    "echarts": "^5.4.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/stock-analysis-frontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/stock-analysis-frontend/issues"
+  },
+  "homepage": "https://username.github.io/stock-analysis-frontend"
 }

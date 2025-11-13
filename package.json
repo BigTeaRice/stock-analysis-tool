@@ -1,0 +1,17 @@
+{
+  "name": "stock-analysis-frontend",
+  "version": "1.0.0",
+  "description": "股票分析工具前端",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "build": "echo 'No build process needed for static site'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": ["stock", "analysis", "finance", "trading"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

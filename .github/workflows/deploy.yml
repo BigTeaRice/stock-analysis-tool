@@ -1,11 +1,11 @@
-name: Deploy static content to Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,8 +32,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # 上传整个仓库，或指定前端文件路径如 'frontend'
+          path: .
       
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

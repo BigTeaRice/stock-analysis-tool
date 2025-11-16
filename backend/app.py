@@ -8,48 +8,16 @@ import time
 import logging
 import os
 
-# 配置日志
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 app = Flask(__name__)
 CORS(app)
 
-# 缓存设置
-cache = {}
-CACHE_TIMEOUT = 300  # 5分钟缓存
-
-def get_cached_data(key):
-    if key in cache:
-        data, timestamp = cache[key]
-        if time.time() - timestamp < CACHE_TIMEOUT:
-            return data
-    return None
-
-def set_cached_data(key, data):
-    cache[key] = (data, time.time())
-
 @app.route('/')
 def index():
-    return jsonify({
-        "message": "股票数据API服务",
-        "version": "1.0.0",
-        "endpoints": {
-            "yfinance": "/api/yfinance/<symbol>?period=3mo",
-            "akshare": "/api/akshare/<symbol>?period=3mo",
-            "health": "/api/health"
-        }
-    })
+    return jsonify({"message": "股票数据API服务", "version": "1.0.0"})
 
 @app.route('/api/yfinance/<symbol>')
 def yfinance_endpoint(symbol):
     period = request.args.get('period', '3mo')
-    cache_key = f"yfinance_{symbol}_{period}"
-    
-    cached_data = get_cached_data(cache_key)
-    if cached_data:
-        return jsonify(cached_data)
-    
     try:
         ticker = yf.Ticker(symbol)
         hist = ticker.history(period=period)
@@ -69,35 +37,23 @@ def yfinance_endpoint(symbol):
             })
         
         info = ticker.info
-        result = {
+        return jsonify({
             "success": True,
             "symbol": symbol,
             "period": period,
+            "data": data,
+            "current": data[-1] if data else {},
             "info": {
                 "name": info.get('longName', ''),
-                "currency": info.get('currency', 'USD'),
-                "exchange": info.get('exchange', '')
-            },
-            "data": data,
-            "current": data[-1] if data else {}
-        }
-        
-        set_cached_data(cache_key, result)
-        return jsonify(result)
-        
+                "currency": info.get('currency', 'USD')
+            }
+        })
     except Exception as e:
-        logger.error(f"yfinance数据获取失败: {str(e)}")
         return jsonify({"error": f"获取数据失败: {str(e)}"}), 500
 
 @app.route('/api/akshare/<symbol>')
 def akshare_endpoint(symbol):
     period = request.args.get('period', '3mo')
-    cache_key = f"akshare_{symbol}_{period}"
-    
-    cached_data = get_cached_data(cache_key)
-    if cached_data:
-        return jsonify(cached_data)
-    
     try:
         if symbol.startswith('6'):
             market_symbol = f"sh{symbol}"
@@ -106,26 +62,22 @@ def akshare_endpoint(symbol):
         else:
             return jsonify({"error": "不支持的A股代码格式"}), 400
         
-        # 获取实时数据
         realtime_data = ak.stock_zh_a_spot_em()
         stock_data = realtime_data[realtime_data['代码'] == symbol]
         
         if stock_data.empty:
             return jsonify({"error": "未找到股票数据"}), 404
         
-        # 生成模拟历史数据（实际应用中应调用真实API）
-        base_price = float(stock_data.iloc[0]['最新价'])
-        data_points = 66
         data = []
-        
-        for i in range(data_points):
+        base_price = float(stock_data.iloc[0]['最新价'])
+        for i in range(66):
             change = (random.random() - 0.5) * 0.03 * base_price
             open_price = base_price
             close_price = open_price + change
             high_price = max(open_price, close_price) + random.random() * 0.02 * base_price
             low_price = min(open_price, close_price) - random.random() * 0.02 * base_price
             
-            date = (datetime.now() - timedelta(days=data_points - i)).strftime("%Y-%m-%d")
+            date = (datetime.now() - timedelta(days=65-i)).strftime("%Y-%m-%d")
             data.append({
                 "date": date,
                 "open": round(open_price, 2),
@@ -135,33 +87,20 @@ def akshare_endpoint(symbol):
                 "volume": random.randint(1000000, 10000000)
             })
         
-        result = {
+        return jsonify({
             "success": True,
             "symbol": symbol,
             "period": period,
+            "data": data,
+            "current": data[-1] if data else {},
             "info": {
                 "name": stock_data.iloc[0]['名称'],
-                "currency": "CNY",
-                "exchange": "SZSE/SSE"
-            },
-            "data": data,
-            "current": data[-1] if data else {}
-        }
-        
-        set_cached_data(cache_key, result)
-        return jsonify(result)
-        
+                "currency": "CNY"
+            }
+        })
     except Exception as e:
-        logger.error(f"AkShare数据获取失败: {str(e)}")
         return jsonify({"error": f"获取数据失败: {str(e)}"}), 500
-
-@app.route('/api/health')
-def health_check():
-    return jsonify({
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat()
-    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port)

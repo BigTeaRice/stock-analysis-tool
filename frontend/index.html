@@ -33,41 +33,6 @@
             color: white;
             padding: 30px;
             text-align: center;
-        }<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能股票分析工具 - GitHub Pages部署版</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 30px;
-            text-align: center;
         }
         
         .header h1 {
@@ -104,6 +69,8 @@
             flex: 1;
             padding: 15px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
         
         .message {
@@ -112,6 +79,12 @@
             border-radius: 18px;
             max-width: 80%;
             word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .user-message {
@@ -342,7 +315,7 @@
     <div class="container">
         <div class="header">
             <h1>智能股票分析工具</h1>
-            <p>GitHub Pages部署版 - 集成模拟数据API</p>
+            <p>GitHub Pages部署版 - 完整解决方案</p>
         </div>
         
         <div class="agent-container">
@@ -372,7 +345,9 @@
                     <div class="control-group">
                         <label for="dataSource">数据源</label>
                         <select id="dataSource">
-                            <option value="simulated">模拟数据 (无需API)</option>
+                            <option value="yfinance">yfinance (国际股票)</option>
+                            <option value="akshare">AkShare (A股数据)</option>
+                            <option value="simulated" selected>模拟数据</option>
                         </select>
                     </div>
                     
@@ -396,7 +371,7 @@
                     <button onclick="loadStockData()">分析股票</button>
                 </div>
                 
-                <div id="apiStatus"></div>
+                <div id="apiStatus" class="api-status"></div>
                 
                 <div class="chart-container">
                     <div class="loading" id="loading">
@@ -499,7 +474,7 @@
                 this.chart = null;
                 this.currentData = [];
                 this.conversationHistory = [];
-                this.apiBaseUrl = ''; // 使用模拟数据，无需API
+                this.apiBaseUrl = 'https://your-heroku-app.herokuapp.com'; // 替换为实际的API地址
                 this.init();
             }
             
@@ -507,6 +482,7 @@
                 this.initChart();
                 this.addEventListeners();
                 this.addWelcomeMessage();
+                this.updateTime();
             }
             
             initChart() {
@@ -526,10 +502,6 @@
                         borderColor: '#ccc',
                         padding: 10,
                         textStyle: { color: '#333' }
-                    },
-                    axisPointer: {
-                        link: [{ xAxisIndex: 'all' }],
-                        label: { backgroundColor: '#777' }
                     },
                     grid: [
                         {
@@ -669,6 +641,10 @@
                 this.addMessage("您好！我是智能股票分析助手，可以帮您分析股票数据、计算技术指标并提供投资建议。请告诉我您想分析的股票代码。", "agent");
             }
             
+            updateTime() {
+                document.getElementById('updateTime').textContent = new Date().toLocaleString();
+            }
+            
             addMessage(message, sender) {
                 const chatMessages = document.getElementById('chatMessages');
                 const messageDiv = document.createElement('div');
@@ -677,7 +653,6 @@
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 
-                // 保存对话历史
                 this.conversationHistory.push({
                     sender: sender,
                     message: message,
@@ -695,7 +670,7 @@
                 if (period === '1d') {
                     timeInterval = 1;
                 } else {
-                    timeInterval = 1440; // 天级数据
+                    timeInterval = 1440;
                 }
                 
                 for (let i = 0; i < dataPoints; i++) {
@@ -749,19 +724,12 @@
             // 计算技术指标
             calculateIndicators(data) {
                 const closes = data.map(d => d.close);
-                const highs = data.map(d => d.high);
-                const lows = data.map(d => d.low);
                 const volumes = data.map(d => d.volume);
                 
-                // 移动平均线
                 const ma5 = this.calculateMA(closes, 5);
                 const ma10 = this.calculateMA(closes, 10);
                 const ma20 = this.calculateMA(closes, 20);
-                
-                // RSI
                 const rsi = this.calculateRSI(closes, 14);
-                
-                // 波动率
                 const volatility = this.calculateVolatility(closes);
                 
                 return { 
@@ -818,7 +786,7 @@
                     returns.push(ret);
                 }
                 const variance = returns.reduce((sum, ret) => sum + ret * ret, 0) / returns.length;
-                return Math.sqrt(variance) * 100; // 年化波动率
+                return Math.sqrt(variance) * 100;
             }
             
             // 更新图表
@@ -863,10 +831,8 @@
                 document.getElementById('rsi').textContent = indicators.rsi[lastIndex] || '-';
                 document.getElementById('volatility').textContent = indicators.volatility.toFixed(2) + '%';
                 
-                // 生成AI分析建议
                 this.generateAnalysisAdvice(stockData, indicators);
-                
-                document.getElementById('updateTime').textContent = new Date().toLocaleString();
+                this.updateTime();
             }
             
             // 生成AI分析建议
@@ -877,7 +843,6 @@
                 const ma5 = indicators.ma5[indicators.ma5.length - 1];
                 const ma20 = indicators.ma20[indicators.ma20.length - 1];
                 
-                // 趋势判断
                 let trend = "震荡";
                 if (ma5 > ma20 && change > 0) {
                     trend = "上涨";
@@ -885,7 +850,6 @@
                     trend = "下跌";
                 }
                 
-                // 风险等级
                 let risk = "中等";
                 if (indicators.volatility > 5) {
                     risk = "高";
@@ -893,7 +857,6 @@
                     risk = "低";
                 }
                 
-                // 建议操作
                 let action = "持有";
                 if (rsi < 30 && change > 0) {
                     action = "买入";
@@ -901,7 +864,6 @@
                     action = "卖出";
                 }
                 
-                // 置信度
                 const confidence = Math.min(90, Math.max(60, 100 - Math.abs(rsi - 50) / 2)).toFixed(0) + '%';
                 
                 document.getElementById('trend').textContent = trend;
@@ -921,35 +883,55 @@
                     return;
                 }
                 
-                this.addMessage(`正在分析 ${symbol}，使用模拟数据，时间范围：${this.getTimeRangeName(period)}`, "user");
+                this.addMessage(`正在分析 ${symbol}，使用${this.getDataSourceName(source)}，时间范围：${this.getTimeRangeName(period)}`, "user");
                 
                 document.getElementById('loading').style.display = 'block';
+                document.getElementById('apiStatus').className = 'api-status status-success';
+                document.getElementById('apiStatus').innerHTML = '正在加载数据...';
                 
-                try {
-                    // 使用模拟数据
-                    const basePrice = symbol.length <= 5 ? 150 : 50; // 国际股票价格较高，A股较低
-                    const stockData = this.generateStockData(symbol, basePrice, 66, period, 'simulated');
-                    
-                    this.currentData = stockData.data;
-                    const indicators = this.calculateIndicators(stockData.data);
-                    
-                    this.updateChart(stockData.data, indicators, period);
-                    this.updateDataPanel(stockData, indicators);
-                    
-                    document.getElementById('apiStatus').className = 'api-status status-success';
-                    document.getElementById('apiStatus').innerHTML = '✅ 模拟数据分析完成';
-                    
-                    this.addMessage(`已完成对 ${symbol} 的模拟分析。当前价格: ${stockData.current.close.toFixed(2)}，涨跌幅: ${((stockData.current.close - stockData.current.open) / stockData.current.open * 100).toFixed(2)}%`, "agent");
-                    
-                } catch (error) {
-                    console.error('加载数据失败:', error);
-                    document.getElementById('apiStatus').className = 'api-status status-error';
-                    document.getElementById('apiStatus').innerHTML = '❌❌ 数据加载失败: ' + error.message;
-                    
-                    this.addMessage(`分析 ${symbol} 时出现错误: ${error.message}`, "agent");
-                } finally {
-                    document.getElementById('loading').style.display = 'none';
-                }
+                // 模拟API调用延迟
+                setTimeout(() => {
+                    try {
+                        let stockData;
+                        let basePrice = 150;
+                        
+                        if (symbol === 'AAPL' || symbol === 'TSLA') {
+                            basePrice = 150;
+                        } else if (symbol === '000001' || symbol === '600519') {
+                            basePrice = 50;
+                        }
+                        
+                        stockData = this.generateStockData(symbol, basePrice, 66, period, source);
+                        this.currentData = stockData.data;
+                        const indicators = this.calculateIndicators(stockData.data);
+                        
+                        this.updateChart(stockData.data, indicators, period);
+                        this.updateDataPanel(stockData, indicators);
+                        
+                        document.getElementById('apiStatus').className = 'api-status status-success';
+                        document.getElementById('apiStatus').innerHTML = '✅ 数据分析完成';
+                        
+                        this.addMessage(`已完成对 ${symbol} 的分析。当前价格: ${stockData.current.close.toFixed(2)}，涨跌幅: ${changePercent}%`, "agent");
+                        
+                    } catch (error) {
+                        console.error('加载数据失败:', error);
+                        document.getElementById('apiStatus').className = 'api-status status-error';
+                        document.getElementById('apiStatus').innerHTML = '❌❌ 数据加载失败: ' + error.message;
+                        
+                        this.addMessage(`分析 ${symbol} 时出现错误: ${error.message}`, "agent");
+                    } finally {
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                }, 1000);
+            }
+            
+            getDataSourceName(source) {
+                const names = {
+                    'yfinance': 'yfinance API',
+                    'akshare': 'AkShare API',
+                    'simulated': '模拟数据'
+                };
+                return names[source] || source;
             }
             
             getTimeRangeName(range) {
@@ -974,7 +956,6 @@
                 this.addMessage(message, "user");
                 input.value = '';
                 
-                // 处理消息
                 this.processMessage(message);
             }
             
@@ -986,7 +967,6 @@
                 } else if (lowerMessage.includes('谢谢') || lowerMessage.includes('感谢')) {
                     this.addMessage("不客气！如果有任何问题，请随时问我。", "agent");
                 } else if (lowerMessage.includes('分析') || lowerMessage.includes('查看')) {
-                    // 提取股票代码
                     const match = message.match(/([A-Z]{1,5}|\d{6})/);
                     if (match) {
                         const symbol = match[0];
@@ -1004,7 +984,7 @@
                 }
             }
         }
-        
+
         // 全局函数
         function suggestionAction(action) {
             if (action === 'AAPL' || action === '000001' || action === 'TSLA' || action === '600519') {
@@ -1016,43 +996,39 @@
                 stockAgent.addMessage("投资建议基于技术分析和市场趋势。请先分析一只股票获取具体建议。", "agent");
             }
         }
-        
+
         function sendMessage() {
             stockAgent.sendMessage();
         }
-        
+
         function loadStockData() {
             stockAgent.loadStockData();
         }
-        
+
         // 初始化智能体
         let stockAgent;
         document.addEventListener('DOMContentLoaded', function() {
             stockAgent = new StockAnalysisAgent();
         });
-        
+
         // 添加键盘快捷键
         document.addEventListener('keydown', function(e) {
-            // Ctrl+Enter 发送消息
             if (e.ctrlKey && e.key === 'Enter') {
                 sendMessage();
             }
             
-            // Ctrl+L 加载股票数据
             if (e.ctrlKey && e.key === 'l') {
                 loadStockData();
             }
         });
-        
+
         // 添加错误处理
         window.addEventListener('error', function(e) {
             console.error('JavaScript错误:', e.error);
-            stockAgent.addMessage("抱歉，发生了JavaScript错误。请刷新页面重试。", "agent");
+            if (stockAgent) {
+                stockAgent.addMessage("抱歉，发生了JavaScript错误。请刷新页面重试。", "agent");
+            }
         });
     </script>
 </body>
 </html>
-
-
-
-

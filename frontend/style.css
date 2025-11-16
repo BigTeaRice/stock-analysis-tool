@@ -51,7 +51,7 @@ body {
 }
 
 .chat-header {
-    padding: 15px;
+    padding: 15极速分析助手px;
     background: #2c3e50;
     color: white;
     text-align: center;
@@ -61,6 +61,8 @@ body {
     flex: 1;
     padding: 15px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .message {
@@ -96,12 +98,12 @@ body {
     gap: 10px;
     padding: 15px;
     background: white;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid #极速分析助手e9ecef;
 }
 
 .chip {
     padding: 8px 15px;
-    background: #ecf0f1;
+    background: #ecf极速分析助手0f1;
     border-radius: 20px;
     cursor: pointer;
     transition: background 0.3s;

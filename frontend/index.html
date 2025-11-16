@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能股票分析工具 - GitHub Pages部署版</title>
+    <title>智能股票分析工具 - 完整部署版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,7 @@
     <div class="container">
         <div class="header">
             <h1>智能股票分析工具</h1>
-            <p>GitHub Pages部署版 - 集成后端API服务</p>
+            <p>完整部署版 - 集成前端展示与后端API</p>
         </div>
         
         <div class="agent-container">
@@ -21,7 +21,7 @@
                 </div>
                 <div class="chat-messages" id="chatMessages">
                     <div class="message agent-message">
-                        您好！我是智能股票分析助手，可以帮您分析股票数据、计算技术指标并提供投资建议。请告诉我您想分析的股票代码。
+                        您好！我是智能股票分析助手，可以帮您分析股票数据、计算技术指标并提供投资建议。
                     </div>
                 </div>
                 <div class="suggestion-chips">
@@ -66,7 +66,7 @@
                     <button onclick="loadStockData()">分析股票</button>
                 </div>
                 
-                <div id="apiStatus"></div>
+                <div id="apiStatus" class="api-status"></div>
                 
                 <div class="chart-container">
                     <div class="loading" id="loading">
@@ -87,7 +87,7 @@
                             <span>最新价:</span>
                             <span id="currentPrice">-</span>
                         </div>
-                        <极速分析助手div class="data-item">
+                        <div class="data-item">
                             <span>涨跌幅:</span>
                             <span id="changePercent">-</span>
                         </div>
@@ -121,7 +121,7 @@
                         </div>
                         <div class="data-item">
                             <span>MA20:</span>
-                            <span id="ma20">-极速分析助手</span>
+                            <span id="ma20">-</span>
                         </div>
                         <div class="data-item">
                             <span>RSI (14):</span>
@@ -165,3 +165,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

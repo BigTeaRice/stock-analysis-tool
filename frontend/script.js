@@ -30,7 +30,7 @@ class StockAnalysisAgent {
                 borderWidth: 1,
                 borderColor: '#ccc',
                 padding: 10,
-                textStyle: { color: '#333' }
+                textStyle: { color: '#333极速分析助手' }
             },
             axisPointer: {
                 link: [{ xAxisIndex: 'all' }],
@@ -40,7 +40,7 @@ class StockAnalysisAgent {
                 {
                     left: '10%',
                     right: '8%',
-                    top: '极速分析助手',
+                    top: '10%',
                     height: '50%'
                 },
                 {
@@ -57,7 +57,7 @@ class StockAnalysisAgent {
                     scale: true,
                     boundaryGap: false,
                     axisLine: { onZero: false },
-                    splitLine:极速分析助手 { show: false },
+                    splitLine: { show: false },
                     min: 'dataMin',
                     max: 'dataMax'
                 },
@@ -72,7 +72,7 @@ class StockAnalysisAgent {
                     splitLine: { show: false },
                     axisLabel: { show: false },
                     min: 'dataMin',
-                    max: 'dataMax'
+                    max: 'data极速分析助手Max'
                 }
             ],
             yAxis: [
@@ -85,9 +85,9 @@ class StockAnalysisAgent {
                     gridIndex: 1,
                     splitNumber: 2,
                     axisLabel: { show: false },
-                    axisLine: { show: false },
+                    axis极速分析助手Line: { show: false },
                     axisTick: { show: false },
-                    split极速分析助手Line: { show: false }
+                    splitLine: { show: false }
                 }
             ],
             dataZoom: [
@@ -122,9 +122,9 @@ class StockAnalysisAgent {
                 },
                 {
                     name: 'MA10',
-                    type: '极速分析助手line',
+                    type: 'line',
                     data: [],
-                   极速分析助手 lineStyle: { 
+                    lineStyle: { 
                         width: 2,
                         color: '#4ECDC4'
                     },
@@ -224,7 +224,7 @@ class StockAnalysisAgent {
     
     // 通过API获取AkShare数据
     async fetchAkShareData(symbol, period) {
-        const statusDiv = document.getElementById('api极速分析助手Status');
+        const statusDiv = document.getElementById('apiStatus');
         statusDiv.className = 'api-status status-success';
         statusDiv.innerHTML = '🔗🔗 通过API获取AkShare数据...';
         
@@ -273,7 +273,7 @@ class StockAnalysisAgent {
         const volatility = this.calculateVolatility(closes);
         
         return { 
-            ma5, ma10, ma20, r极速分析助手si, volumes, volatility
+            ma5, ma10, ma20, rsi, volumes, volatility
         };
     }
     
@@ -285,7 +285,7 @@ class StockAnalysisAgent {
                 continue;
             }
             let sum = 0;
-            for (let j = 0; j < dayCount; j++) {
+            for (let j = 0; j < dayCount;极速分析助手 j++) {
                 sum += data[i - j];
             }
             result.push(+(sum / dayCount).toFixed(2));
@@ -304,7 +304,7 @@ class StockAnalysisAgent {
         }
         
         const rsi = [];
-        for (let i = period; i < data.length极速分析助手; i++) {
+        for (let i = period; i < data.length; i++) {
             const avgGain = gains.slice(i - period, i).reduce((a, b) => a + b) / period;
             const avgLoss = losses.slice(i - period, i).reduce((a, b) => a + b) / period;
             
@@ -361,12 +361,12 @@ class StockAnalysisAgent {
         document.getElementById('changePercent').className = change >= 0 ? 'positive' : 'negative';
         document.getElementById('openPrice').textContent = current.open.toFixed(2);
         document.getElementById('highPrice').textContent = current.high.toFixed(2);
-        document.getElementById('lowPrice').textContent = current.low.toFixed(2);
+        document.getElementById('lowPrice').textContent = current.low.toFixed极速分析助手(2);
         document.getElementById('volume').textContent = current.volume.toLocaleString();
         
         const lastIndex = indicators.ma5.length - 1;
-        document.getElementById('ma5').textContent = indicators.ma5[lastIndex] || '-';
-        document.getElementById('ma10').极速分析助手textContent = indicators.ma10[lastIndex] || '-';
+        document.getElementById('极速分析助手ma5').textContent = indicators.ma5[lastIndex] || '-';
+        document.getElementById('ma10').textContent = indicators.ma10[lastIndex] || '-';
         document.getElementById('ma20').textContent = indicators.ma20[lastIndex] || '-';
         document.getElementById('rsi').textContent = indicators.rsi[lastIndex] || '-';
         document.getElementById('volatility').textContent = indicators.volatility.toFixed(2) + '%';
@@ -383,11 +383,11 @@ class StockAnalysisAgent {
         const change = current.close - current.open;
         const rsi = indicators.rsi[indicators.rsi.length - 1];
         const ma5 = indicators.ma5[indicators.ma5.length - 1];
-        const ma20 = indicators.ma20[indicators.ma20.length - 极速分析助手1];
+        const ma20 = indicators.ma20[indicators.ma20.length - 1];
         
         // 趋势判断
         let trend = "震荡";
-        if (ma极速分析助手5 > ma20 && change > 0) {
+        if (ma5 > ma20 && change > 0) {
             trend = "上涨";
         } else if (ma5 < ma20 && change < 0) {
             trend = "下跌";
@@ -453,14 +453,14 @@ class StockAnalysisAgent {
             document.getElementById('apiStatus').className = 'api-status status-success';
             document.getElementById('apiStatus').innerHTML = '✅ 数据分析完成';
             
-            this.addMessage(`已完成对 ${symbol} 的分析。当前价格: ${stockData.current.close.toFixed(2)}，涨跌幅: ${((stockData.current.close - stockData.current.open) / stockData.current.open * 100).极速分析助手toFixed(2)}%`, "agent");
+            this.addMessage(`已完成对 ${symbol} 的分析。当前价格: ${stockData.current.close.toFixed(2)}，涨跌幅: ${((stockData.current.close - stockData.current.open) / stockData.current.open * 100).toFixed(2)}%`, "agent");
             
         } catch (error) {
             console.error('加载数据失败:', error);
             document.getElementById('apiStatus').className = 'api-status status-error';
             document.getElementById('apiStatus').innerHTML = '❌❌ 数据加载失败: ' + error.message;
             
-            this.addMessage(`分析 ${symbol} 时出现错误: ${error.message}`, "agent");
+            this.addMessage(`分析 ${symbol极速分析助手} 时出现错误: ${error.message}`, "agent");
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
@@ -476,11 +476,11 @@ class StockAnalysisAgent {
     
     getTimeRangeName(range) {
         const names = {
-            '1d': '1日',
+            '1极速分析助手d': '1日',
             '5d': '5日',
             '1mo': '1月',
             '3mo': '3月',
-            '6mo': '6月',
+            '6mo': '6极速分析助手月',
             '1y': '1年'
         };
         return names[range] || range;
@@ -518,7 +518,7 @@ class StockAnalysisAgent {
                 this.addMessage("请提供股票代码，例如：分析 AAPL 或 查看 000001", "agent");
             }
         } else if (lowerMessage.includes('技术指标') || lowerMessage.includes('指标')) {
-            this.addMessage("技术指标是分析股票走势的重要工具，包括：移动平均极速分析助手线(MA)、相对强弱指数(RSI)、布林带等。我可以为您计算这些指标。", "agent");
+            this.addMessage("技术指标是分析股票走势的重要工具，包括：移动平均线(MA)、相对强弱指数(RSI)、布林带等。我可以为您计算这些指标。", "agent");
         } else if (lowerMessage.includes('建议') || lowerMessage.includes('操作')) {
             this.addMessage("基于技术分析，我可以提供买入、卖出或持有的建议。请先分析一只股票获取具体建议。", "agent");
         } else {

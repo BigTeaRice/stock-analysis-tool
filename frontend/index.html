@@ -963,7 +963,7 @@
         }
         
         function suggestionAction(action) {
-            if (['AAPL', '000001', 'TSLA', '600519'].includes(action)) {
+            if (action === 'AAPL' || action === '000001' || action === 'TSLA' || action === '600519') {
                 document.getElementById('stockCode').value = action;
                 stockAgent.loadStockData();
             } else if (action === '技术指标') {
@@ -988,4 +988,5 @@
     </script>
 </body>
 </html>
+
 

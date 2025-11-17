@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能股票分析工具 - 完整部署版</title>
+    <title>智能股票分析工具 - GitHub Pages部署版</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         * {
@@ -42,7 +42,7 @@
         
         .header p {
             font-size: 1.2em;
-            opacity: 极速分析助手0.9;
+            opacity: 0.9;
         }
         
         .agent-container {
@@ -125,7 +125,7 @@
         
         .chat-input {
             padding: 15px;
-            border-top: 1极速分析助手px solid #e9ecef;
+            border-top: 1px solid #e9ecef;
             display: flex;
         }
         
@@ -184,7 +184,7 @@
             color: white;
             border: none;
             cursor: pointer;
-            transition: background 0.极速分析助手3s;
+            transition: background 0.3s;
         }
         
         button:hover {
@@ -192,7 +192,7 @@
         }
         
         .chart-container {
-            padding: 20极速分析助手px;
+            padding: 20px;
             height: 500px;
             position: relative;
         }
@@ -204,7 +204,7 @@
         
         .data-panel {
             display: grid;
-            grid-template-columns: repeat(auto-fit, min极速分析助手max(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             padding: 20px;
             background: #f8f9fa;
@@ -255,7 +255,7 @@
             background: rgba(255,255,255,0.9);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(极速分析助手0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
         
         .spinner {
@@ -315,7 +315,7 @@
     <div class="container">
         <div class="header">
             <h1>智能股票分析工具</h1>
-            <p>GitHub Pages部署版 - 完整解决方案</p>
+            <p>GitHub Pages部署版 - 解决404错误</p>
         </div>
         
         <div class="agent-container">
@@ -368,7 +368,7 @@
                         <input type="text" id="stockCode" placeholder="如: AAPL, 000001" value="AAPL">
                     </div>
                     
-                    <button onclick="loadStockData()">分析股票</极速分析助手button>
+                    <button onclick="loadStockData()">分析股票</button>
                 </div>
                 
                 <div id="apiStatus" class="api-status"></div>
@@ -396,7 +396,7 @@
                             <span>涨跌幅:</span>
                             <span id="changePercent">-</span>
                         </div>
-                        <极速分析助手div class="data-item">
+                        <div class="data-item">
                             <span>开盘价:</span>
                             <span id="openPrice">-</span>
                         </div>
@@ -426,7 +426,7 @@
                         </div>
                         <div class="data-item">
                             <span>MA20:</span>
-                            <span id="ma20极速分析助手">-</span>
+                            <span id="ma20">-</span>
                         </div>
                         <div class="data-item">
                             <span>RSI (14):</span>
@@ -447,12 +447,12 @@
                         <div class="data-item">
                             <span>风险等级:</span>
                             <span id="risk">-</span>
-                        </极速分析助手div>
+                        </div>
                         <div class="data-item">
                             <span>建议操作:</span>
                             <span id="action">-</span>
                         </div>
-                        <div class="data极速分析助手-item">
+                        <div class="data-item">
                             <span>置信度:</span>
                             <span id="confidence">-</span>
                         </div>
@@ -473,7 +473,6 @@
                 this.chart = null;
                 this.currentData = [];
                 this.conversationHistory = [];
-                this.apiBaseUrl = 'https://your-heroku-app.herokuapp.com';
                 this.init();
             }
             
@@ -594,7 +593,7 @@
                             name: 'MA20',
                             type: 'line',
                             data: [],
-                            lineStyle: { width: 2, color: '#45B7D极速分析助手1' },
+                            lineStyle: { width: 2, color: '#45B7D1' },
                             symbol: 'none'
                         },
                         {
@@ -734,7 +733,7 @@
                     for (let j = 0; j < dayCount; j++) {
                         sum += data[i - j];
                     }
-                    result.push(+(sum / day极速分析助手Count).toFixed(2));
+                    result.push(+(sum / dayCount).toFixed(2));
                 }
                 return result;
             }
@@ -743,7 +742,7 @@
                 const gains = [];
                 const losses = [];
                 
-                for (let i = 1极速分析助手; i < data.length; i++) {
+                for (let i = 1; i < data.length; i++) {
                     const difference = data[i] - data[i - 1];
                     gains.push(Math.max(difference, 0));
                     losses.push(Math.max(-difference, 0));
@@ -787,7 +786,7 @@
                         { data: indicators.ma5 },
                         { data: indicators.ma10 },
                         { data: indicators.ma20 },
-                       极速分析助手 { data: volumes }
+                        { data: volumes }
                     ]
                 };
                 
@@ -841,7 +840,7 @@
                 }
                 
                 let action = "持有";
-                if (rsi < 30 && change > 极速分析助手0) {
+                if (rsi < 30 && change > 0) {
                     action = "买入";
                 } else if (rsi > 70 && change < 0) {
                     action = "卖出";
@@ -941,7 +940,7 @@
                 const lowerMessage = message.toLowerCase();
                 
                 if (lowerMessage.includes('帮助') || lowerMessage.includes('怎么用')) {
-                    this.addMessage("我可以帮您分析股票数据、计算技术指标并提供投资建议。请告诉我股票代码或您想了解的内容。", "agent");
+                    this.addMessage("我可以帮您分析股票数据、计算技术指标、提供投资建议。请告诉我股票代码或您想了解的内容。", "agent");
                 } else if (lowerMessage.includes('谢谢') || lowerMessage.includes('感谢')) {
                     this.addMessage("不客气！如果有任何问题，请随时问我。", "agent");
                 } else if (lowerMessage.includes('分析') || lowerMessage.includes('查看')) {
@@ -956,7 +955,7 @@
                 } else if (lowerMessage.includes('技术指标') || lowerMessage.includes('指标')) {
                     this.addMessage("技术指标是分析股票走势的重要工具，包括：移动平均线(MA)、相对强弱指数(RSI)、布林带等。我可以为您计算这些指标。", "agent");
                 } else if (lowerMessage.includes('建议') || lowerMessage.includes('操作')) {
-                    this极速分析助手.addMessage("基于技术分析，我可以提供买入、卖出或持有的建议。请先分析一只股票获取具体建议。", "agent");
+                    this.addMessage("基于技术分析，我可以提供买入、卖出或持有的建议。请先分析一只股票获取具体建议。", "agent");
                 } else {
                     this.addMessage("我主要专注于股票数据分析。您可以告诉我股票代码进行分析，或询问关于技术指标的问题。", "agent");
                 }
@@ -964,7 +963,7 @@
         }
         
         function suggestionAction(action) {
-            if (action === 'AAPL' || action === '000001' || action === 'TSLA' || action === '600519') {
+            if (['AAPL', '000001', 'TSLA', '600519'].includes(action)) {
                 document.getElementById('stockCode').value = action;
                 stockAgent.loadStockData();
             } else if (action === '技术指标') {
@@ -986,24 +985,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             stockAgent = new StockAnalysisAgent();
         });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                sendMessage();
-            }
-            
-            if (e.ctrlKey && e.key === 'l') {
-                loadStockData();
-            }
-        });
-        
-        window.addEventListener('error', function(e) {
-            console.error('JavaScript错误:', e.error);
-            if (stockAgent) {
-                stockAgent.addMessage("抱歉，发生了JavaScript错误。请刷新页面重试。", "agent");
-            }
-        });
     </script>
 </body>
 </html>
-
